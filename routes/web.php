@@ -9,34 +9,6 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\PageController;
 use Illuminate\Support\Facades\Route;
 
-// Frontend Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
-Route::get('/product/{slug}', [HomeController::class, 'productDetail'])->name('product.detail');
-
-// Cart Routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
-
-use App\Http\Controllers\Frontend\CheckoutController;
-
-// Checkout Routes
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('place.order');
-Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank.you');
-
-// Informational Pages
-Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/categories', [PageController::class, 'categories'])->name('categories');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::post('/contact', [PageController::class, 'contactStore'])->name('contact.store');
-Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-Route::get('/shipping-return', [PageController::class, 'shippingReturn'])->name('shipping.return');
-Route::get('/terms-conditions', [PageController::class, 'terms'])->name('terms');
-Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacy');
-
 // User Auth
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserLoginController::class, 'login'])->name('login.post');
@@ -44,10 +16,38 @@ Route::post('/logout', [UserLoginController::class, 'logout'])->name('logout');
 Route::get('/register', [UserRegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [UserRegisterController::class, 'register'])->name('register.post');
 
+use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\UserController;
 
-// User Dashboard Routes
+// Protected Frontend Routes
 Route::middleware(['auth'])->group(function () {
+    // Frontend Routes
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
+    Route::get('/product/{slug}', [HomeController::class, 'productDetail'])->name('product.detail');
+
+    // Cart Routes
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
+
+    // Checkout Routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('place.order');
+    Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank.you');
+
+    // Informational Pages
+    Route::get('/about', [PageController::class, 'about'])->name('about');
+    Route::get('/categories', [PageController::class, 'categories'])->name('categories');
+    Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+    Route::post('/contact', [PageController::class, 'contactStore'])->name('contact.store');
+    Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+    Route::get('/shipping-return', [PageController::class, 'shippingReturn'])->name('shipping.return');
+    Route::get('/terms-conditions', [PageController::class, 'terms'])->name('terms');
+    Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacy');
+
+    // User Dashboard Routes
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/order/{order}', [UserController::class, 'orderDetails'])->name('user.order.details');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
