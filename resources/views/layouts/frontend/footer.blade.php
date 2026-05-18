@@ -3,37 +3,41 @@
         <div class="footer-grid">
             <div class="footer-about">
                 <div class="footer-logo">
-                    <img src="https://via.placeholder.com/150x50?text=XURAVEX" alt="Xuravex Logo">
+                    @if(isset($gs['site_logo']))
+                        <img src="{{ asset('uploads/settings/' . $gs['site_logo']) }}" alt="{{ $gs['site_name'] ?? 'Logo' }}" style="max-height: 114px; ">
+                    @else
+                        <img src="{{asset('../images/footer-logo.png')}}" alt="Xuravex Logo">
+                    @endif
                 </div>
-                <p>Xuravex delivers trusted research peptides with verified quality, supported by independent lab testing and transparent reporting.</p>
+                <p>{{ $gs['site_name'] ?? 'Xuravex' }} delivers trusted research peptides with verified quality, supported by independent lab testing and transparent reporting.</p>
             </div>
             
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('about') }}">About</a></li>
+                    <li><a href="{{ route('shop') }}">Shop</a></li>
+                    <li><a href="{{ route('contact') }}">Contact</a></li>
                 </ul>
             </div>
             
             <div class="footer-links">
                 <h4>Policy</h4>
                 <ul>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Shipping & Returns</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="{{ route('faq') }}">FAQ</a></li>
+                    <li><a href="{{ route('shipping.return') }}">Shipping & Returns</a></li>
+                    <li><a href="{{ route('terms') }}">Terms & Conditions</a></li>
+                    <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
                 </ul>
             </div>
             
             <div class="footer-contact">
                 <h4>Contact</h4>
                 <ul>
-                    <li><i class="fa-solid fa-location-dot"></i> 245 Madison Avenue, Suite 1200 NY 10016, USA</li>
-                    <li><i class="fa-solid fa-envelope"></i> support@xuravex.com</li>
-                    <li><i class="fa-solid fa-phone"></i> +1 (212) 555-7834</li>
+                    <li><i class="fa-solid fa-location-dot"></i> {{ $gs['site_address'] ?? '245 Madison Avenue, Suite 1200 NY 10016, USA' }}</li>
+                    <li><i class="fa-solid fa-envelope"></i> {{ $gs['site_email'] ?? 'support@xuravex.com' }}</li>
+                    <li><i class="fa-solid fa-phone"></i> {{ $gs['site_phone'] ?? '+1 (212) 555-7834' }}</li>
                 </ul>
             </div>
         </div>
@@ -60,7 +64,7 @@
 
 .footer-logo img {
     margin-bottom: 20px;
-    filter: brightness(0) invert(1);
+    /* filter: brightness(0) invert(1); */
 }
 
 .footer-about p {

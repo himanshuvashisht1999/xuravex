@@ -3,33 +3,33 @@
 @section('title', 'Login - Xuravex')
 
 @section('content')
-    <div class="login-bg">
-        <!-- Side Vials (Decorations) -->
-        <img src="https://via.placeholder.com/200x300?text=BAC+Water" class="login-side-img left" alt="Vial Decoration">
-        <img src="https://via.placeholder.com/200x300?text=BAC+Water" class="login-side-img right" alt="Vial Decoration">
+    <div class="login-bg"style="background-image:url({{asset('images/login-page-bg.png')}})">
+        
 
         <div class="login-container">
             <h2>Welcome Back</h2>
             <p>Login to your account to continue</p>
-            <div style="width: 100px; height: 2px; background: var(--secondary-color); margin: 0 auto 30px;"></div>
+            <div style="width: 100px; height: 2px; background: linear-gradient(90deg, #A36911 0%, #E59F36 100%); margin: 0 auto 30px;    margin-top: 15px;"></div>
 
             <form action="{{ route('login.post') }}" method="POST" class="login-form">
                 @csrf
                 <div class="form-group">
-                    <label>Username or email address *</label>
+                    <label>Username or email address <span style="color: red;">*</span></label>
                     <div class="input-with-icon">
                         <i class="fa-solid fa-user"></i>
-                        <input type="email" name="email" placeholder="Enter your username or email" required>
+                        <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your username or email" required>
                     </div>
+                    @error('email') <span style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: block;">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Password *</label>
+                    <label>Password <span style="color: red;">*</span></label>
                     <div class="input-with-icon">
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" name="password" id="password" placeholder="Enter your password" required>
                         <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePass()"></i>
                     </div>
+                    @error('password') <span style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: block;">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="form-footer-links">
@@ -42,6 +42,7 @@
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Log in</button>
             </form>
 
+            {{-- 
             <div class="social-login">
                 <p style="position: relative; font-size: 13px;">
                     <span style="background: rgba(20,20,20,1); padding: 0 15px; position: relative; z-index: 2;">or continue with</span>
@@ -57,6 +58,7 @@
                     Continue with Microsoft
                 </div>
             </div>
+            --}}
 
             <div class="login-signup-link">
                 Don't have an account? <a href="{{ route('register') }}">Sign up</a>

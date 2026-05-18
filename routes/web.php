@@ -5,15 +5,37 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\Frontend\Auth\LoginController as UserLoginController;
 use App\Http\Controllers\Frontend\Auth\RegisterController as UserRegisterController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\PageController;
 use Illuminate\Support\Facades\Route;
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
-Route::get('/product/5-amino-1mq', [HomeController::class, 'productDetail'])->name('product.detail');
-Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
-Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank.you');
+Route::get('/product/{slug}', [HomeController::class, 'productDetail'])->name('product.detail');
+
+// Cart Routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
+
+use App\Http\Controllers\Frontend\CheckoutController;
+
+// Checkout Routes
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('place.order');
+Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank.you');
+
+// Informational Pages
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/categories', [PageController::class, 'categories'])->name('categories');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [PageController::class, 'contactStore'])->name('contact.store');
+Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/shipping-return', [PageController::class, 'shippingReturn'])->name('shipping.return');
+Route::get('/terms-conditions', [PageController::class, 'terms'])->name('terms');
+Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacy');
 
 // User Auth
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
@@ -21,6 +43,19 @@ Route::post('/login', [UserLoginController::class, 'login'])->name('login.post')
 Route::post('/logout', [UserLoginController::class, 'logout'])->name('logout');
 Route::get('/register', [UserRegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [UserRegisterController::class, 'register'])->name('register.post');
+
+use App\Http\Controllers\Frontend\UserController;
+
+// User Dashboard Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/order/{order}', [UserController::class, 'orderDetails'])->name('user.order.details');
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::post('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+    Route::get('/shipping-addresses', [UserController::class, 'shippingAddresses'])->name('user.shipping');
+    Route::post('/shipping-addresses', [UserController::class, 'addShippingAddress'])->name('user.shipping.store');
+    Route::delete('/shipping-addresses/{id}', [UserController::class, 'deleteShippingAddress'])->name('user.shipping.delete');
+});
 
 // Admin Routes
 Route::prefix('admin')->group(function () {
@@ -47,6 +82,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('orders')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
             Route::get('/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+            Route::post('/update-status/{id}', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
         });
 
         // Customer Management

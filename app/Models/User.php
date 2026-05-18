@@ -22,6 +22,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'intended_use',
+        'billing_title',
+        'first_name',
+        'last_name',
+        'address',
+        'apartment',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'company',
     ];
 
     /**
@@ -45,5 +57,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function shippingAddresses()
+    {
+        return $this->hasMany(ShippingAddress::class);
     }
 }

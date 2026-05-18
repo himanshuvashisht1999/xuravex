@@ -3,23 +3,38 @@
         <nav class="navbar">
             <div class="logo">
                 <a href="{{ route('home') }}">
-                    <img src="https://via.placeholder.com/150x50?text=XURAVEX" alt="Xuravex Logo" class="img-fluid">
+                    @if(isset($gs['site_logo']))
+                        <img src="{{ asset('uploads/settings/' . $gs['site_logo']) }}" alt="{{ $gs['site_name'] ?? 'Logo' }}" class="img-fluid" style="max-height: 50px;">
+                    @else
+                        <img src="https://via.placeholder.com/150x50?text=XURAVEX" alt="Xuravex Logo" class="img-fluid">
+                    @endif
                 </a>
             </div>
             
-            <ul class="nav-links">
+           <div style="display: flex;gap: 20px;">
+             <ul class="nav-links">
                 <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About</a></li>
                 <li><a href="{{ route('shop') }}" class="{{ request()->routeIs('shop') ? 'active' : '' }}">Shop</a></li>
-                <li><a href="#">Categories</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="{{ route('categories') }}" class="{{ request()->routeIs('categories') ? 'active' : '' }}">Categories</a></li>
+                <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a></li>
             </ul>
             
             <div class="nav-icons">
                 <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
-                <a href="{{ route('cart') }}"><i class="fa-solid fa-cart-shopping"></i></a>
-                <a href="{{ route('login') }}"><i class="fa-solid fa-user"></i></a>
+                <a href="{{ route('cart') }}" style="position: relative;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    @if(session('cart') && count(session('cart')) > 0)
+                        <span style="position: absolute; top: -10px; right: -10px; background: var(--secondary-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700;">{{ count(session('cart')) }}</span>
+                    @endif
+                </a>
+                @auth('web')
+                    <a href="{{ route('user.dashboard') }}" title="My Account"><i class="fa-solid fa-circle-user"></i></a>
+                @else
+                    <a href="{{ route('login') }}" title="Login"><i class="fa-solid fa-user"></i></a>
+                @endauth
             </div>
+           </div>
             
             <div class="mobile-menu-btn">
                 <i class="fa-solid fa-bars"></i>

@@ -9,17 +9,49 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('frontend.index');
+        $newArrivals = \App\Models\Product::where('status', 1)->latest()->take(4)->get();
+        $bestSellers = \App\Models\Product::where('status', 1)->inRandomOrder()->take(4)->get();
+        return view('frontend.index', compact('newArrivals', 'bestSellers'));
     }
 
-    public function shop()
+    public function shop(Request $request)
     {
-        return view('frontend.shop');
+        $query = \App\Models\Product::where('status', 1);
+
+        if ($request->category) {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
+
+        if ($request->sort) {
+            if ($request->sort == 'price_low') {
+                $query->orderBy('selling_price', 'asc');
+            } elseif ($request->sort == 'price_high') {
+                $query->orderBy('selling_price', 'desc');
+            } elseif ($request->sort == 'newest') {
+                $query->orderBy('created_at', 'desc');
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $products = $query->paginate(12);
+        $categories = \App\Models\Category::where('status', 1)->get();
+
+        return view('frontend.shop', compact('products', 'categories'));
     }
 
-    public function productDetail()
+    public function productDetail($slug)
     {
-        return view('frontend.product-detail');
+        $product = \App\Models\Product::where('slug', $slug)->where('status', 1)->firstOrFail();
+        $relatedProducts = \App\Models\Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('status', 1)
+            ->take(4)
+            ->get();
+            
+        return view('frontend.product-detail', compact('product', 'relatedProducts'));
     }
 
     public function cart()
