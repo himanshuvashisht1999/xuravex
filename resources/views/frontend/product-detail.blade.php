@@ -15,19 +15,43 @@
         <div class="container">
             <div class="product-detail-flex">
                 <!-- Left: Gallery -->
-                <div class="product-gallery">
-                    <div class="main-img">
-                        @php $images = $product->images; @endphp
-                        <img src="{{ !empty($images) ? asset('uploads/products/' . $images[0]) : 'https://via.placeholder.com/400x600?text=No+Image' }}"
-                            alt="{{ $product->name }}">
+                @php $images = $product->images; @endphp
+                <div class="product-gallery" 
+                     x-data="{ 
+                         activeImage: '{{ !empty($images) ? asset('uploads/products/' . $images[0]) : 'https://via.placeholder.com/400x600?text=No+Image' }}',
+                         showLightbox: false 
+                     }">
+                    
+                    <!-- Main Image (Interactive Hover Zoom and Click to Zoom) -->
+                    <div class="main-img" style="cursor: zoom-in;" @click="showLightbox = true">
+                        <img :src="activeImage" alt="{{ $product->name }}">
                     </div>
+
+                    <!-- Full-Screen Lightbox Modal -->
+                    <div class="lightbox-modal" x-show="showLightbox" x-transition style="display: none;" @click="showLightbox = false" @keydown.escape.window="showLightbox = false">
+                        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+                        <img :src="activeImage" alt="{{ $product->name }}" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" @click.stop>
+                    </div>
+
+                    <!-- Thumbnails Slider -->
                     @if(!empty($images) && count($images) > 1)
-                        <div class="thumb-grid">
-                            @foreach($images as $image)
-                                <div class="thumb-box">
-                                    <img src="{{ asset('uploads/products/' . $image) }}" alt="Thumb">
+                        <div class="product-thumbs-wrapper">
+                            <div class="swiper product-thumbs-slider">
+                                <div class="swiper-wrapper">
+                                    @foreach($images as $image)
+                                        <div class="swiper-slide" style="width: auto;">
+                                            <div class="thumb-box" 
+                                                 :class="activeImage === '{{ asset('uploads/products/' . $image) }}' ? 'active-thumb' : ''"
+                                                 @click="activeImage = '{{ asset('uploads/products/' . $image) }}'">
+                                                <img src="{{ asset('uploads/products/' . $image) }}" alt="Thumb">
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
+                            </div>
+                            <!-- Small Navigation Buttons for Thumbnails -->
+                            <div class="swiper-nav-btn prev-btn product-thumbs-prev"><i class="fa-solid fa-chevron-left"></i></div>
+                            <div class="swiper-nav-btn next-btn product-thumbs-next"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
                     @endif
                 </div>
@@ -200,4 +224,142 @@
                 users must follow all relevant laws and regulations in their respective jurisdictions.</p>
         </div>
     </section>
+
+@push('css')
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+    /* Interactive Hover Zoom on Main Image */
+    .product-gallery .main-img {
+        overflow: hidden;
+        border-radius: var(--border-radius-md);
+        background: #F3E9D9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 500px; /* Standardize main image container height */
+    }
+
+    .product-gallery .main-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Crop/contain appropriately */
+        transition: transform 0.4s ease;
+    }
+
+    .product-gallery .main-img:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Thumbnail slider container */
+    .product-thumbs-wrapper {
+        position: relative;
+        padding: 0 35px;
+        margin-top: 15px;
+    }
+
+    .product-thumbs-slider {
+        overflow: hidden;
+    }
+
+    .product-thumbs-slider .swiper-slide {
+        width: 75px !important;
+        height: 90px !important;
+    }
+
+    .product-thumbs-slider .thumb-box {
+        background: #F3E9D9;
+        border-radius: var(--border-radius-sm);
+        padding: 5px;
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid transparent !important;
+        transition: var(--transition);
+        box-sizing: border-box;
+    }
+
+    .product-thumbs-slider .thumb-box img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .product-thumbs-slider .thumb-box.active-thumb, 
+    .product-thumbs-slider .thumb-box:hover {
+        border-color: var(--secondary-color) !important;
+        box-shadow: 0 4px 10px rgba(193, 139, 57, 0.2);
+    }
+
+    /* Thumbnail navigation chevrons */
+    .product-thumbs-wrapper .swiper-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        background: var(--white);
+        border: 1px solid rgba(62, 39, 3, 0.2);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 10px;
+        cursor: pointer;
+        z-index: 10;
+        transition: var(--transition);
+    }
+
+    .product-thumbs-wrapper .swiper-nav-btn:hover {
+        background: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+    .product-thumbs-wrapper .swiper-nav-btn.prev-btn {
+        left: 0;
+    }
+
+    .product-thumbs-wrapper .swiper-nav-btn.next-btn {
+        right: 0;
+    }
+
+    /* Full-screen Lightbox Modal */
+    .lightbox-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: zoom-out;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Swiper('.product-thumbs-slider', {
+            slidesPerView: 'auto',
+            spaceBetween: 10,
+            freeMode: true,
+            watchSlidesProgress: true,
+            navigation: {
+                nextEl: '.product-thumbs-next',
+                prevEl: '.product-thumbs-prev',
+            }
+        });
+    });
+</script>
+@endpush
 @endsection

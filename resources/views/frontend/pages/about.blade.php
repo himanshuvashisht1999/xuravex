@@ -5,61 +5,65 @@
 @section('content')
 <section class="page-header" style="background-image:url({{asset('images/innerpage-banner.png')}}) !important; background-size: cover; background-position: center;background-repeat:no-repeat !important;background-size:cover !important; padding: 100px 0; color: white; text-align: center;">
     <div class="container">
-        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 20px;">Advancing Scientific Discovery</h1>
-        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto; opacity: 0.9;">Xuravex is a leading provider of high-quality research peptides and laboratory supplies, dedicated to supporting researchers worldwide.</p>
+        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 20px;">About Us</h1>
     </div>
 </section>
 
 <section style="padding: 80px 0;">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;"class="about-sec">
-            <div>
-                <h2 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 25px;">Our Mission</h2>
-                <p style="color: var(--gray-700); line-height: 1.8; margin-bottom: 20px;">At Xuravex, our mission is to empower the scientific community by providing access to ultra-pure research materials and cutting-edge laboratory solutions. We understand that the integrity of your research depends on the quality of your supplies.</p>
-                <p style="color: var(--gray-700); line-height: 1.8;">Every product in our catalog undergoes rigorous quality control and third-party testing to ensure it meets the highest standards of purity and potency. We are committed to transparency, reliability, and excellence in everything we do.</p>
-            </div>
-            <div style="position: relative;">
-                <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800" alt="Laboratory" style="width: 100%; border-radius: 20px; box-shadow: var(--shadow-lg);">
-                <div style="position: absolute; bottom: 30px; left: 30px; background: var(--secondary-color); color: white; padding: 10px; border-radius: 15px; box-shadow: var(--shadow-md);">
-                    <h3 style="font-size: 2rem; margin-bottom: 5px;">99.9%</h3>
-                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Purity Guaranteed</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section style="background: var(--gray-100); padding: 80px 0;">
-    <div class="container">
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h2 style="color: var(--primary-color); font-size: 2.5rem;">Why Choose Xuravex?</h2>
-            <div style="width: 80px; height: 3px; background: var(--secondary-color); margin: 20px auto;"></div>
-        </div>
+    <div class="container" style="max-width: 1000px;">
         
-        <div class="about-feature" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div style="width: 70px; height: 70px; background: rgba(193, 139, 57, 0.1); color: var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 1.8rem;">
-                    <i class="fa-solid fa-microscope"></i>
-                </div>
-                <h3 style="margin-bottom: 15px;">Purity & Quality</h3>
-                <p style="color: var(--gray-600); font-size: 0.95rem;">All our peptides are manufactured to exceed 99% purity standards, verified by HPLC and MS analysis.</p>
-            </div>
+        <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 5px; margin-bottom: 40px; border: 1px solid #f5c6cb; text-align: center;">
+            <strong>FOR RESEARCH USE ONLY<br>
+            NOT FOR HUMAN OR ANIMAL CONSUMPTION</strong><br>
+            All Xuravex products are sold exclusively for lawful, non clinical research purposes.
+        </div>
+
+        <div style="background: white; padding: 40px; border-radius: 10px; border: 1px solid #c18b39; line-height: 1.8; color: var(--gray-700);">
             
-            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div style="width: 70px; height: 70px; background: rgba(193, 139, 57, 0.1); color: var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 1.8rem;">
-                    <i class="fa-solid fa-truck-fast"></i>
-                </div>
-                <h3 style="margin-bottom: 15px;">Fast Shipping</h3>
-                <p style="color: var(--gray-600); font-size: 0.95rem;">Discreet and fast shipping worldwide, with temperature-controlled packaging where necessary.</p>
+            <div style="margin-bottom: 40px;">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px; font-size: 2rem;">Who We Are</h2>
+                <p style="margin-bottom: 15px;">Xuravex LLC is a Wyoming based company specializing in the distribution of high purity, research grade peptides sold exclusively for research use only (RUO). We operate under a rigorous framework of quality assurance, third party laboratory verification, and strict regulatory compliance, serving researchers, biotechnology companies, and institutional buyers who require reliable, fully documented research compounds.</p>
+                <p>Founded on a commitment to transparency and scientific integrity, Xuravex was established to raise the standard of what responsible RUO peptide distribution looks like, combining the traceability expectations of the pharmaceutical supply chain with the agility of a specialized research supply operation.</p>
             </div>
-            
-            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div style="width: 70px; height: 70px; background: rgba(193, 139, 57, 0.1); color: var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 1.8rem;">
-                    <i class="fa-solid fa-headset"></i>
-                </div>
-                <h3 style="margin-bottom: 15px;">Expert Support</h3>
-                <p style="color: var(--gray-600); font-size: 0.95rem;">Our team of specialists is available to answer your technical questions and support your research.</p>
+
+            <div style="margin-bottom: 40px;">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px; font-size: 2rem;">What We Do</h2>
+                <p style="margin-bottom: 15px;">We source, qualify, and distribute research grade peptides for research use only. Every product we carry is subject to our multi layer supplier qualification protocol, which includes:</p>
+                <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
+                    <li>Third party analytical testing via ISO 17025 accredited laboratories</li>
+                    <li>HPLC purity analysis with full chromatogram documentation</li>
+                    <li>Mass spectrometry confirmation of molecular identity</li>
+                    <li>Certificate of Analysis (COA) review and archiving for every lot</li>
+                    <li>Supplier verification through registered company credentials and quality management documentation</li>
+                </ul>
+                <p>Our catalog includes peptide compounds spanning multiple molecular classes and structural families, supplied exclusively for in vitro research and non clinical laboratory use. All compounds are characterized by their chemical and molecular properties and are supplied with full analytical documentation.</p>
             </div>
+
+            <div style="margin-bottom: 40px;">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px; font-size: 2rem;">Our Standards</h2>
+                <p style="margin-bottom: 15px;">Xuravex operates within a compliance first culture. We partner exclusively with manufacturers who can demonstrate verifiable quality infrastructure, and we decline to work with any supplier whose documentation does not meet our standards regardless of price. Our internal vetting process has screened and excluded multiple suppliers who could not substantiate the integrity of their materials.</p>
+                <p>We believe the research community deserves better than opaque sourcing, unverified purity claims, and inconsistent lot quality. Our goal is to be the supplier that researchers and procurement teams trust when those standards matter.</p>
+            </div>
+
+            <div style="margin-bottom: 40px;">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px; font-size: 2rem;">Who We Serve</h2>
+                <p style="margin-bottom: 15px;">Xuravex primarily serves the research and scientific community. Our customers include:</p>
+                <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
+                    <li>Independent research laboratories</li>
+                    <li>Biotechnology and life science companies</li>
+                    <li>Academic and institutional research programs</li>
+                    <li>Organizations and individuals engaged in lawful peptide research and development</li>
+                </ul>
+                <p>All purchasers must agree that products will be used solely for lawful research purposes and will not be used for human or animal consumption, self administration, or any non research application. By completing a purchase, you accept these conditions in full.</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px; font-size: 2rem;">Our Commitment</h2>
+                <p style="margin-bottom: 15px;">Research depends on reliable materials. Xuravex exists to provide exactly that, consistent quality, full documentation, and a sourcing partner you can trust to stand behind every lot it distributes.</p>
+                <p>Contact us through the form below and a member of our team will be in touch.</p>
+                <a href="{{ route('contact') }}" class="btn btn-primary" style="margin-top: 10px;">Contact Us</a>
+            </div>
+
         </div>
     </div>
 </section>
