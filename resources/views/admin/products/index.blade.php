@@ -41,11 +41,32 @@
                 </td>
                 <td><strong>{{ $product->name }}</strong></td>
                 <td>{{ $product->category->name ?? 'Uncategorized' }}</td>
-                <td>${{ number_format($product->mrp_price, 2) }}</td>
-                <td>{{ $product->stock }}</td>
+                <td>
+                    @if($product->has_sizes && $product->sizes->count() > 0)
+                        @php
+                            $minPrice = $product->sizes->min(function($s) { return $s->pivot->selling_price ?: $s->pivot->mrp_price; });
+                            $maxPrice = $product->sizes->max(function($s) { return $s->pivot->selling_price ?: $s->pivot->mrp_price; });
+                        @endphp
+                        @if($minPrice == $maxPrice)
+                            ${{ number_format($minPrice, 2) }}
+                        @else
+                            ${{ number_format($minPrice, 2) }} - ${{ number_format($maxPrice, 2) }}
+                        @endif
+                    @else
+                        ${{ number_format($product->selling_price ?: $product->mrp_price, 2) }}
+                    @endif
+                </td>
+                <td>
+                    @if($product->has_sizes && $product->sizes->count() > 0)
+                        {{ $product->sizes->sum('pivot.stock') }}
+                    @else
+                        {{ $product->stock }}
+                    @endif
+                </td>
                 <td>
                     @php
-                        $lowStock = $product->stock <= $product->min_stock;
+                        $totalStock = $product->has_sizes && $product->sizes->count() > 0 ? $product->sizes->sum('pivot.stock') : $product->stock;
+                        $lowStock = $totalStock <= $product->min_stock;
                         $statusClass = $product->status ? ($lowStock ? 'badge-low-stock' : 'badge-active') : 'badge-pending';
                         $statusText = $product->status ? ($lowStock ? 'Low Stock' : 'Active') : 'Inactive';
                     @endphp

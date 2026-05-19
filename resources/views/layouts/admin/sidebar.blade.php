@@ -73,6 +73,24 @@
             </li>
 
             <li>
+                <a href="javascript:void(0)" @click="openMenu = (openMenu === 'sizes' ? '' : 'sizes')"
+                    :class="openMenu === 'sizes' ? 'active' : ''" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fa-solid fa-ruler"></i> Sizes
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+                </a>
+                <ul x-show="openMenu === 'sizes'" style="background: rgba(0,0,0,0.2); padding-left: 20px;">
+                    <li><a href="{{ route('admin.sizes.index') }}"
+                            class="{{ Route::is('admin.sizes.index') ? 'active' : '' }}" style="font-size: 13px;">All
+                            Sizes</a></li>
+                    <li><a href="{{ route('admin.sizes.create') }}"
+                            class="{{ Route::is('admin.sizes.create') ? 'active' : '' }}" style="font-size: 13px;">Add
+                            New Size</a></li>
+                </ul>
+            </li>
+
+            <li>
                 <a href="javascript:void(0)" @click="openMenu = (openMenu === 'orders' ? '' : 'orders')"
                     :class="openMenu === 'orders' ? 'active' : ''" style="justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">

@@ -62,9 +62,18 @@
                                     <a href="{{ route('product.detail', $product->slug) }}">
                                         <h3>{{ $product->name }}</h3>
                                     </a>
-                                    <div class="product-price">${{ number_format($product->selling_price, 2) }}</div>
+                                    <div class="product-price">
+                                        @if($product->has_sizes && $product->sizes->count() > 0)
+                                            ${{ number_format($product->sizes->first()->pivot->selling_price ?: $product->sizes->first()->pivot->mrp_price, 2) }}
+                                        @else
+                                            ${{ number_format($product->selling_price ?: $product->mrp_price, 2) }}
+                                        @endif
+                                    </div>
                                     <form action="{{ route('cart.add', $product->id) }}" method="POST">
                                         @csrf
+                                        @if($product->has_sizes && $product->sizes->count() > 0)
+                                            <input type="hidden" name="size_id" value="{{ $product->sizes->first()->id }}">
+                                        @endif
                                         <button type="submit" class="btn btn-primary">Add to Cart</button>
                                     </form>
                                 </div>
@@ -114,9 +123,18 @@
                                     <a href="{{ route('product.detail', $product->slug) }}">
                                         <h3>{{ $product->name }}</h3>
                                     </a>
-                                    <div class="product-price">${{ number_format($product->selling_price, 2) }}</div>
+                                    <div class="product-price">
+                                        @if($product->has_sizes && $product->sizes->count() > 0)
+                                            ${{ number_format($product->sizes->first()->pivot->selling_price ?: $product->sizes->first()->pivot->mrp_price, 2) }}
+                                        @else
+                                            ${{ number_format($product->selling_price ?: $product->mrp_price, 2) }}
+                                        @endif
+                                    </div>
                                     <form action="{{ route('cart.add', $product->id) }}" method="POST">
                                         @csrf
+                                        @if($product->has_sizes && $product->sizes->count() > 0)
+                                            <input type="hidden" name="size_id" value="{{ $product->sizes->first()->id }}">
+                                        @endif
                                         <button type="submit" class="btn btn-primary">Add to Cart</button>
                                     </form>
                                 </div>

@@ -18,6 +18,14 @@ class HomeController extends Controller
     {
         $query = \App\Models\Product::where('status', 1);
 
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%')
+                  ->orWhere('short_description', 'like', '%' . $request->search . '%');
+            });
+        }
+
         if ($request->category) {
             $query->whereHas('category', function($q) use ($request) {
                 $q->where('slug', $request->category);

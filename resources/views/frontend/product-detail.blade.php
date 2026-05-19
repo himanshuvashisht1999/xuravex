@@ -13,26 +13,26 @@
     <!-- Product Detail Section -->
     <section class="product-detail-section">
         <div class="container">
-            <div class="product-detail-flex">
+            @php $images = $product->images; @endphp
+            <div class="product-detail-flex"
+                 x-data="{ 
+                     activeImage: '{{ !empty($images) ? asset('uploads/products/' . $images[0]) : 'https://via.placeholder.com/400x600?text=No+Image' }}',
+                     showLightbox: false 
+                 }">
                 <!-- Left: Gallery -->
-                @php $images = $product->images; @endphp
-                <div class="product-gallery" 
-                     x-data="{ 
-                         activeImage: '{{ !empty($images) ? asset('uploads/products/' . $images[0]) : 'https://via.placeholder.com/400x600?text=No+Image' }}',
-                         showLightbox: false 
-                     }">
+                <div class="product-gallery">
                     
                     <!-- Main Image (Interactive Hover Zoom and Click to Zoom) -->
                     <div class="main-img" style="cursor: zoom-in;" @click="showLightbox = true">
                         <img :src="activeImage" alt="{{ $product->name }}">
                     </div>
-
+ 
                     <!-- Full-Screen Lightbox Modal -->
                     <div class="lightbox-modal" x-show="showLightbox" x-transition style="display: none;" @click="showLightbox = false" @keydown.escape.window="showLightbox = false">
                         <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
                         <img :src="activeImage" alt="{{ $product->name }}" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" @click.stop>
                     </div>
-
+ 
                     <!-- Thumbnails Slider -->
                     @if(!empty($images) && count($images) > 1)
                         <div class="product-thumbs-wrapper">
@@ -55,36 +55,67 @@
                         </div>
                     @endif
                 </div>
-
+ 
                 <!-- Right: Info -->
                 <div class="product-info-right">
                     <h1>{{ $product->name }}</h1>
-                    <div class="price-range">${{ number_format($product->selling_price, 2) }}</div>
+                    <div class="price-range">
+                        @if($product->has_sizes && $product->sizes->count() > 0)
+                            ${{ number_format($product->sizes->first()->pivot->selling_price ?: $product->sizes->first()->pivot->mrp_price, 2) }}
+                        @else
+                            ${{ number_format($product->selling_price ?: $product->mrp_price, 2) }}
+                        @endif
+                    </div>
                     <p class="short-desc">{{ $product->short_description }}</p>
-
+ 
                     <div class="vial-info"><strong>Quantity:</strong> {{ $product->quantity }} {{ $product->quantity_type }}
                     </div>
                     <div class="vial-info"><strong>SKU:</strong> {{ $product->sku }}</div>
                     <div class="vial-info"><strong>Category:</strong> {{ $product->category->name ?? 'N/A' }}</div>
-
-                    @if($product->stock > 0)
-                        <div class="total-price-box">
-                            <span class="total">${{ number_format($product->selling_price, 2) }}</span>
-                            <span class="stock-status"><i class="fa-solid fa-circle-check"></i> In Stock</span>
-                        </div>
-                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Add to
-                                Cart</button>
-                        </form>
-                    @else
-                        <div class="total-price-box">
-                            <span class="stock-status" style="color: #ff4d4d;"><i class="fa-solid fa-circle-xmark"></i> Out of
-                                Stock</span>
-                        </div>
-                        <button class="btn btn-primary" style="width: 100%; padding: 15px; opacity: 0.5; cursor: not-allowed;"
-                            disabled>Add to Cart</button>
-                    @endif
+ 
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                        @csrf
+                        
+                        @if($product->has_sizes && $product->sizes->count() > 0)
+                            <div class="size-selector-wrapper" style="margin-top: 20px; margin-bottom: 25px;">
+                                <label style="display: block; font-weight: 700; font-size: 13px; text-transform: uppercase; color: var(--primary-color); margin-bottom: 10px;">Select Size:</label>
+                                <div class="size-options-grid" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    @foreach($product->sizes as $idx => $size)
+                                        <label class="size-option-label" style="cursor: pointer; position: relative; margin: 0;">
+                                            <input type="radio" name="size_id" value="{{ $size->id }}" class="size-radio-input" style="display: none;" {{ $idx === 0 ? 'checked' : '' }}
+                                                   data-mrp="{{ number_format($size->pivot->mrp_price, 2) }}"
+                                                   data-price="{{ number_format($size->pivot->selling_price ?: $size->pivot->mrp_price, 2) }}"
+                                                   data-stock="{{ $size->pivot->stock }}"
+                                                   data-image="{{ $size->pivot->image ? asset('uploads/products/' . $size->pivot->image) : ( !empty($images) ? asset('uploads/products/' . $images[0]) : '' ) }}"
+                                                   @change="activeImage = $el.dataset.image ? $el.dataset.image : '{{ !empty($images) ? asset('uploads/products/' . $images[0]) : '' }}'">
+                                            <div class="size-option-box" style="padding: 10px 18px; border: 2px solid #E5D5C0; border-radius: 6px; font-weight: 600; font-size: 13px; text-align: center; transition: all 0.3s ease; min-width: 50px; background: white; color: var(--primary-color);">
+                                                {{ $size->name }}
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+ 
+                        @if(($product->has_sizes && $product->sizes->count() > 0) || (!$product->has_sizes && $product->stock > 0))
+                            <div class="total-price-box">
+                                <span class="total">
+                                    @if($product->has_sizes && $product->sizes->count() > 0)
+                                        ${{ number_format($product->sizes->first()->pivot->selling_price ?: $product->sizes->first()->pivot->mrp_price, 2) }}
+                                    @else
+                                        ${{ number_format($product->selling_price ?: $product->mrp_price, 2) }}
+                                    @endif
+                                </span>
+                                <span class="stock-status"><i class="fa-solid fa-circle-check"></i> In Stock</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Add to Cart</button>
+                        @else
+                            <div class="total-price-box">
+                                <span class="stock-status" style="color: #ff4d4d;"><i class="fa-solid fa-circle-xmark"></i> Out of Stock</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; padding: 15px; opacity: 0.5; cursor: not-allowed;" disabled>Add to Cart</button>
+                        @endif
+                    </form>
                 </div>
             </div>
 
@@ -157,7 +188,13 @@
                                 <a href="{{ route('product.detail', $relProduct->slug) }}">
                                     <h3>{{ $relProduct->name }}</h3>
                                 </a>
-                                <div class="price">${{ number_format($relProduct->selling_price, 2) }}</div>
+                                <div class="price">
+                                    @if($relProduct->has_sizes && $relProduct->sizes->count() > 0)
+                                        ${{ number_format($relProduct->sizes->first()->pivot->selling_price ?: $relProduct->sizes->first()->pivot->mrp_price, 2) }}
+                                    @else
+                                        ${{ number_format($relProduct->selling_price ?: $relProduct->mrp_price, 2) }}
+                                    @endif
+                                </div>
                                 <a href="{{ route('product.detail', $relProduct->slug) }}" class="btn btn-primary">View Details</a>
                             </div>
                         </div>
@@ -229,6 +266,17 @@
 <!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 <style>
+    /* Size Selector Styles */
+    .size-radio-input:checked + .size-option-box {
+        border-color: var(--secondary-color) !important;
+        background-color: var(--secondary-color) !important;
+        color: white !important;
+        box-shadow: 0 4px 10px rgba(193, 139, 57, 0.25);
+    }
+    .size-option-box:hover {
+        border-color: var(--secondary-color);
+    }
+
     /* Interactive Hover Zoom on Main Image */
     .product-gallery .main-img {
         overflow: hidden;
@@ -359,6 +407,60 @@
                 prevEl: '.product-thumbs-prev',
             }
         });
+
+        // Dynamic Size/Price switching
+        const sizeRadios = document.querySelectorAll('.size-radio-input');
+        const priceDisplay = document.querySelector('.price-range');
+        const totalDisplay = document.querySelector('.total-price-box .total');
+        const stockStatus = document.querySelector('.stock-status');
+        const addToCartBtn = document.querySelector('.product-info-right button[type="submit"]');
+
+        function updatePriceAndStock(radio) {
+            if (!radio) return;
+            const price = radio.dataset.price;
+            const stock = parseInt(radio.dataset.stock);
+
+            // Update price displays
+            if (priceDisplay) priceDisplay.textContent = `$${price}`;
+            if (totalDisplay) totalDisplay.textContent = `$${price}`;
+
+            // Update stock display and button availability
+            if (stock > 0) {
+                if (stockStatus) {
+                    stockStatus.innerHTML = `<i class="fa-solid fa-circle-check"></i> In Stock (${stock})`;
+                    stockStatus.style.color = ''; // Reset to default style
+                }
+                if (addToCartBtn) {
+                    addToCartBtn.removeAttribute('disabled');
+                    addToCartBtn.style.opacity = '1';
+                    addToCartBtn.style.cursor = 'pointer';
+                    addToCartBtn.textContent = 'Add to Cart';
+                }
+            } else {
+                if (stockStatus) {
+                    stockStatus.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Out of Stock`;
+                    stockStatus.style.color = '#ff4d4d';
+                }
+                if (addToCartBtn) {
+                    addToCartBtn.setAttribute('disabled', 'disabled');
+                    addToCartBtn.style.opacity = '0.5';
+                    addToCartBtn.style.cursor = 'not-allowed';
+                    addToCartBtn.textContent = 'Out of Stock';
+                }
+            }
+        }
+
+        sizeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                updatePriceAndStock(this);
+            });
+        });
+
+        // Initialize with default checked radio (first size)
+        const checkedRadio = document.querySelector('.size-radio-input:checked');
+        if (checkedRadio) {
+            updatePriceAndStock(checkedRadio);
+        }
     });
 </script>
 @endpush

@@ -15,6 +15,7 @@ class Product extends Model
         'slug',
         'category_id',
         'brand_id',
+        'has_sizes',
         'mrp_price',
         'selling_price',
         'quantity',
@@ -39,6 +40,7 @@ class Product extends Model
         'images' => 'array',
         'status' => 'boolean',
         'is_featured' => 'boolean',
+        'has_sizes' => 'boolean',
         'mrp_price' => 'decimal:2',
         'selling_price' => 'decimal:2'
     ];
@@ -51,6 +53,13 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_sizes')
+                    ->withPivot('mrp_price', 'selling_price', 'stock', 'image')
+                    ->withTimestamps();
     }
 
     protected static function boot()

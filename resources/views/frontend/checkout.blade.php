@@ -135,7 +135,10 @@
                                     <img src="{{ !empty($item['image']) ? asset('uploads/products/' . $item['image']) : 'https://via.placeholder.com/60x80?text=Vial' }}" alt="{{ $item['name'] }}">
                                     <div class="order-item-detail">
                                         <h4>{{ $item['name'] }}</h4>
-                                        <p style="color: var(--secondary-color); font-weight: 600;">Quantity : {{ $item['quantity'] }}</p>
+                                        @if(!empty($item['size_name']))
+                                            <span style="display: block; font-size: 11px; color: var(--secondary-color); font-weight: 600; margin-bottom: 2px;">Size: {{ $item['size_name'] }}</span>
+                                        @endif
+                                        <p style="color: var(--secondary-color); font-weight: 600; margin: 0;">Quantity : {{ $item['quantity'] }}</p>
                                     </div>
                                     <div class="order-item-price">${{ number_format($item['price'] * $item['quantity'], 2) }}</div>
                                 </div>

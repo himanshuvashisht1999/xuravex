@@ -123,6 +123,16 @@ Route::prefix('admin')->group(function () {
             Route::post('/store', [App\Http\Controllers\Admin\BrandController::class, 'store'])->name('admin.brands.store');
         });
 
+        // Size Management
+        Route::prefix('sizes')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\SizeController::class, 'index'])->name('admin.sizes.index');
+            Route::get('/create', [App\Http\Controllers\Admin\SizeController::class, 'create'])->name('admin.sizes.create');
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\SizeController::class, 'edit'])->name('admin.sizes.edit');
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\SizeController::class, 'update'])->name('admin.sizes.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\Admin\SizeController::class, 'destroy'])->name('admin.sizes.destroy');
+            Route::post('/store', [App\Http\Controllers\Admin\SizeController::class, 'store'])->name('admin.sizes.store');
+        });
+
         // Site Settings
         Route::prefix('settings')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');

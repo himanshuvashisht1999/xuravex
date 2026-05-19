@@ -21,7 +21,22 @@
             </ul>
             
             <div class="nav-icons">
-                <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+                <!-- Sliding Search Bar Form -->
+                <form action="{{ route('shop') }}" method="GET" class="search-form" x-data="{ open: false }" @click.outside="open = false">
+                    @if(request('category'))
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                    @endif
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+                    
+                    <div class="search-input-wrapper" :class="open ? 'open' : ''">
+                        <input type="text" name="search" placeholder="Search products..." value="{{ request('search') }}" class="search-input" x-ref="searchInput">
+                    </div>
+                    <button type="button" class="search-btn" @click="if (open) { if ($refs.searchInput.value.trim() !== '') { $el.closest('form').submit(); } else { open = false; } } else { open = true; $nextTick(() => $refs.searchInput.focus()); }">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
                 <a href="{{ route('cart') }}" style="position: relative;">
                     <i class="fa-solid fa-cart-shopping"></i>
                     @if(session('cart') && count(session('cart')) > 0)
@@ -86,6 +101,63 @@
 }
 
 .nav-icons a:hover i {
+    color: var(--secondary-color);
+}
+
+/* Sliding Search Bar Styling */
+.search-form {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-input-wrapper {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-input-wrapper.open {
+    width: 200px;
+    opacity: 1;
+    margin-right: 10px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 6px 15px;
+    border: 1px solid rgba(62, 39, 3, 0.2);
+    border-radius: 20px;
+    background: #F3E9D9;
+    color: var(--primary-color);
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.search-input::placeholder {
+    color: rgba(62, 39, 3, 0.5);
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.search-btn i {
+    font-size: 18px;
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.search-btn:hover i {
     color: var(--secondary-color);
 }
 

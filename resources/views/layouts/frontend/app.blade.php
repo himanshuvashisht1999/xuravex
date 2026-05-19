@@ -5,6 +5,8 @@
     @vite(['resources/css/app.css', 'resources/css/frontend.css', 'resources/js/app.js'])
 </head>
 <body>
+    @include('layouts.frontend.partials.age-verification')
+
     <div id="app">
         @include('layouts.frontend.header')
 

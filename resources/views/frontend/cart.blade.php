@@ -44,6 +44,9 @@
                                         </div>
                                         <div class="cart-item-name">
                                             <h4>{{ $details['name'] }}</h4>
+                                            @if(!empty($details['size_name']))
+                                                <span style="display: block; font-size: 12px; color: var(--secondary-color); font-weight: 600; margin-top: 4px;">Size: {{ $details['size_name'] }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

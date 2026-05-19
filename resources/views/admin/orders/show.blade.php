@@ -47,10 +47,25 @@
                         <td>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <div class="table-thumb">
-                                    <img src="{{ !empty($item->product->images) ? asset('uploads/products/' . $item->product->images[0]) : 'https://via.placeholder.com/40x50?text=Vial' }}" alt="">
+                                    @php
+                                        $itemImage = null;
+                                        if (!empty($item->size) && $item->product) {
+                                            $sizeObj = $item->product->sizes()->where('name', $item->size)->first();
+                                            if ($sizeObj && $sizeObj->pivot->image) {
+                                                $itemImage = $sizeObj->pivot->image;
+                                            }
+                                        }
+                                        if (!$itemImage && $item->product && !empty($item->product->images)) {
+                                            $itemImage = $item->product->images[0];
+                                        }
+                                    @endphp
+                                    <img src="{{ $itemImage ? asset('uploads/products/' . $itemImage) : 'https://via.placeholder.com/40x50?text=Vial' }}" alt="">
                                 </div>
                                 <div>
                                     <div style="font-weight: 700;">{{ $item->product_name }}</div>
+                                    @if(!empty($item->size))
+                                        <div style="font-size: 12px; color: #c18b39; font-weight: 600; margin-top: 2px;">Size: {{ $item->size }}</div>
+                                    @endif
                                     <div style="font-size: 12px; color: #888;">SKU: {{ $item->product->sku ?? 'N/A' }}</div>
                                 </div>
                             </div>

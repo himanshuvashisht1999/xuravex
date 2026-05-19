@@ -44,9 +44,26 @@
                                     <td style="padding: 15px;">
                                         <div style="display: flex; align-items: center; gap: 15px;">
                                             <div style="width: 50px; height: 60px; background: var(--gray-100); border-radius: 8px; flex-shrink: 0;">
-                                                <img src="{{ !empty($item->product->images) ? asset('uploads/products/' . $item->product->images[0]) : 'https://via.placeholder.com/50x60?text=Vial' }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                                                @php
+                                                    $itemImage = null;
+                                                    if (!empty($item->size) && $item->product) {
+                                                        $sizeObj = $item->product->sizes()->where('name', $item->size)->first();
+                                                        if ($sizeObj && $sizeObj->pivot->image) {
+                                                            $itemImage = $sizeObj->pivot->image;
+                                                        }
+                                                    }
+                                                    if (!$itemImage && $item->product && !empty($item->product->images)) {
+                                                        $itemImage = $item->product->images[0];
+                                                    }
+                                                @endphp
+                                                <img src="{{ $itemImage ? asset('uploads/products/' . $itemImage) : 'https://via.placeholder.com/50x60?text=Vial' }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                                             </div>
-                                            <span style="font-weight: 600;">{{ $item->product_name }}</span>
+                                            <div style="display: flex; flex-direction: column;">
+                                                <span style="font-weight: 600;">{{ $item->product_name }}</span>
+                                                @if(!empty($item->size))
+                                                    <span style="font-size: 11px; color: var(--secondary-color); font-weight: 600; margin-top: 2px;">Size: {{ $item->size }}</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td style="padding: 15px;">${{ number_format($item->price, 2) }}</td>
