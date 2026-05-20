@@ -103,6 +103,32 @@
             </div>
         </div>
 
+        <h3 style="margin: 40px 0 25px;">Shipping Settings (FedEx)</h3>
+        <div class="admin-form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="admin-form-group">
+                <label>FedEx Mode</label>
+                <select name="fedex_mode" class="admin-select">
+                    <option value="sandbox" {{ ($settings['fedex_mode'] ?? '') == 'sandbox' ? 'selected' : '' }}>Sandbox (Testing)</option>
+                    <option value="live" {{ ($settings['fedex_mode'] ?? '') == 'live' ? 'selected' : '' }}>Live (Production)</option>
+                </select>
+            </div>
+            <div class="admin-form-group">
+                <label>Origin ZIP Code</label>
+                <input type="text" name="fedex_origin_zip" class="admin-input" value="{{ $settings['fedex_origin_zip'] ?? '' }}" placeholder="Enter Origin ZIP Code for shipping">
+            </div>
+        </div>
+
+        <div class="admin-form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="admin-form-group">
+                <label>FedEx API Key (Client ID)</label>
+                <input type="text" name="fedex_api_key" class="admin-input" value="{{ $settings['fedex_api_key'] ?? '' }}" placeholder="Enter FedEx API Key">
+            </div>
+            <div class="admin-form-group">
+                <label>FedEx Secret Key</label>
+                <input type="password" name="fedex_secret_key" class="admin-input" value="{{ $settings['fedex_secret_key'] ?? '' }}" placeholder="Enter FedEx Secret Key">
+            </div>
+        </div>
+
         <div class="admin-actions">
             <button type="submit" class="btn-submit" style="width: 200px;">Save All Settings</button>
         </div>

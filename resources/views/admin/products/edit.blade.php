@@ -72,6 +72,10 @@
                     </select>
                 </div>
             </div>
+            <div class="admin-form-group">
+                <label>Weight (lbs)</label>
+                <input type="number" step="0.01" name="weight" id="weight" class="admin-input" placeholder="0.00" value="{{ old('weight', $product->weight) }}">
+            </div>
         </div>
 
         <div class="admin-form-grid">
@@ -119,6 +123,7 @@
                             <th>MRP Price <span class="required">*</span></th>
                             <th>Selling Price</th>
                             <th>Stock <span class="required">*</span></th>
+                            <th>Weight (lbs)</th>
                             <th>Variant Image</th>
                             <th style="width: 80px;">Action</th>
                         </tr>
@@ -142,6 +147,9 @@
                             </td>
                             <td>
                                 <input type="number" name="sizes[{{ $index }}][stock]" class="admin-input" placeholder="0" required min="0" value="{{ $pivotSize->pivot->stock }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="sizes[{{ $index }}][weight]" class="admin-input" placeholder="0.00" min="0" value="{{ $pivotSize->pivot->weight }}">
                             </td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -309,6 +317,9 @@
                 </td>
                 <td>
                     <input type="number" name="sizes[${rowIndex}][stock]" class="admin-input" placeholder="0" required min="0" value="0">
+                </td>
+                <td>
+                    <input type="number" step="0.01" name="sizes[${rowIndex}][weight]" class="admin-input" placeholder="0.00" min="0">
                 </td>
                 <td>
                     <input type="file" name="sizes[${rowIndex}][image]" class="admin-input" style="padding: 5px; font-size: 12px;" accept="image/*">

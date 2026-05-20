@@ -68,6 +68,7 @@ class ProductController extends Controller
             'selling_price' => $request->has_sizes ? null : $request->selling_price,
             'quantity' => $request->quantity,
             'quantity_type' => $request->quantity_type,
+            'weight' => $request->has_sizes ? null : $request->weight,
             'sku' => $request->sku,
             'barcode' => $request->barcode,
             'hsn_code' => $request->hsn_code,
@@ -99,6 +100,7 @@ class ProductController extends Controller
                         'mrp_price' => $sizeItem['mrp_price'],
                         'selling_price' => $sizeItem['selling_price'] ?? null,
                         'stock' => $sizeItem['stock'] ?? 0,
+                        'weight' => $sizeItem['weight'] ?? null,
                         'image' => $sizeImageName
                     ];
                 }
@@ -147,6 +149,7 @@ class ProductController extends Controller
             $data['mrp_price'] = null;
             $data['selling_price'] = null;
             $data['stock'] = null;
+            $data['weight'] = null;
         }
 
         // Handle Images
@@ -192,6 +195,7 @@ class ProductController extends Controller
                         'mrp_price' => $sizeItem['mrp_price'],
                         'selling_price' => $sizeItem['selling_price'] ?? null,
                         'stock' => $sizeItem['stock'] ?? 0,
+                        'weight' => $sizeItem['weight'] ?? null,
                         'image' => $sizeImageName
                     ];
                 }

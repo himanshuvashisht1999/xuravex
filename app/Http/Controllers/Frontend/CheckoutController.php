@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\FedExService;
 
 class CheckoutController extends Controller
 {
@@ -48,11 +49,17 @@ class CheckoutController extends Controller
             $total += $item['price'] * $item['quantity'];
         }
 
+        $shippingAmount = $request->shipping_amount ?? 0;
+        $shippingMethod = $request->shipping_method ?? null;
+        $payableAmount = $total + $shippingAmount;
+
         $order = Order::create([
             'order_number' => 'ORD-' . strtoupper(Str::random(10)),
             'user_id' => auth()->id(),
             'total_amount' => $total,
-            'payable_amount' => $total,
+            'shipping_amount' => $shippingAmount,
+            'shipping_method' => $shippingMethod,
+            'payable_amount' => $payableAmount,
             'billing_name' => $request->billing_name,
             'billing_email' => $request->billing_email,
             'billing_phone' => $request->billing_phone,
@@ -102,5 +109,27 @@ class CheckoutController extends Controller
     {
         $order = Order::where('order_number', $orderNumber)->firstOrFail();
         return view('frontend.thank-you', compact('order'));
+    }
+
+    public function getShippingRates(Request $request, FedExService $fedex)
+    {
+        $zip = $request->zip;
+        if (empty($zip)) {
+            return response()->json(['success' => false, 'error' => 'Zip code is required.']);
+        }
+
+        $cart = session()->get('cart', []);
+        $totalWeight = 0;
+        foreach($cart as $item) {
+            $w = isset($item['weight']) && is_numeric($item['weight']) ? $item['weight'] : 1;
+            $totalWeight += $w * $item['quantity'];
+        }
+
+        $result = $fedex->getRates($zip, $totalWeight);
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']]);
+        }
+
+        return response()->json(['success' => true, 'rates' => $result['rates']]);
     }
 }

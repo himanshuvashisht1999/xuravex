@@ -14,6 +14,8 @@
         <div class="container">
             <form action="{{ route('place.order') }}" method="POST">
                 @csrf
+                <input type="hidden" name="shipping_amount" id="shipping_amount_input" value="0">
+                <input type="hidden" name="shipping_method" id="shipping_method_input" value="">
                 <div class="checkout-flex" x-data="{ shipToDifferent: false }">
                     <!-- Left: Forms -->
                     <div class="checkout-forms">
@@ -145,13 +147,19 @@
                                 @endforeach
                             </div>
 
+                            <div id="shipping-rates-container" style="margin-top: 20px; border-top: 1px solid var(--gray-100); padding-top: 15px;">
+                                <h4 style="font-size: 16px; margin-bottom: 10px;">Shipping Options</h4>
+                                <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 10px;">Enter your ZIP code to see shipping rates.</p>
+                                <div id="shipping-options"></div>
+                            </div>
+
                             <div class="summary-line" style="margin-top: 20px;">
                                 <span>Subtotal :</span>
                                 <span style="font-weight: 700; color: var(--accent-color);">${{ number_format($total, 2) }}</span>
                             </div>
                             <div class="summary-line summary-total" style="border-top: 2px solid var(--gray-100); padding-top: 15px; font-size: 24px;">
                                 <span>Total :</span>
-                                <span style="color: var(--secondary-color);">${{ number_format($total, 2) }}</span>
+                                <span style="color: var(--secondary-color);" id="total-display">${{ number_format($total, 2) }}</span>
                             </div>
                         </div>
 
@@ -198,6 +206,82 @@
     </section>
 @endsection
 
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const billingZip = document.querySelector('input[name="billing_pincode"]');
+        const shippingZip = document.querySelector('input[name="shipping_pincode"]');
+        const shipToDifferent = document.querySelector('input[name="ship_to_different"]');
+        
+        function fetchRates() {
+            let zip = shipToDifferent && shipToDifferent.checked ? shippingZip.value : billingZip.value;
+            if (!zip || zip.length < 5) return;
+            
+            document.getElementById('shipping-options').innerHTML = '<p style="font-size: 13px; color: var(--secondary-color);">Loading rates...</p>';
+            
+            fetch('{{ route("checkout.shipping-rates") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ zip: zip })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    let html = '';
+                    data.rates.forEach((rate, index) => {
+                        let checked = index === 0 ? 'checked' : '';
+                        html += `
+                            <div class="shipping-option" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                <label style="font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                                    <input type="radio" name="shipping_method_radio" value="${rate.service_name}|${rate.amount}" ${checked} onchange="updateTotal()">
+                                    ${rate.service_name}
+                                </label>
+                                <span style="font-weight: 600;">$${parseFloat(rate.amount).toFixed(2)}</span>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('shipping-options').innerHTML = html;
+                    updateTotal();
+                } else {
+                    document.getElementById('shipping-options').innerHTML = '<p style="color:red; font-size:13px;">' + data.error + '</p>';
+                }
+            })
+            .catch(e => {
+                document.getElementById('shipping-options').innerHTML = '<p style="color:red; font-size:13px;">Error fetching rates.</p>';
+            });
+        }
+
+        if (billingZip) billingZip.addEventListener('blur', fetchRates);
+        if (shippingZip) shippingZip.addEventListener('blur', fetchRates);
+        if (shipToDifferent) shipToDifferent.addEventListener('change', fetchRates);
+    });
+
+    function updateTotal() {
+        let subtotal = {{ $total }};
+        let shippingAmount = 0;
+        let shippingMethodName = '';
+        
+        let selectedRate = document.querySelector('input[name="shipping_method_radio"]:checked');
+        if (selectedRate) {
+            let parts = selectedRate.value.split('|');
+            shippingMethodName = parts[0];
+            shippingAmount = parseFloat(parts[1]);
+        }
+        
+        document.getElementById('shipping_amount_input').value = shippingAmount;
+        document.getElementById('shipping_method_input').value = shippingMethodName;
+        
+        let total = subtotal + shippingAmount;
+        document.getElementById('total-display').innerText = '$' + total.toFixed(2);
+        
+        window.checkoutTotal = total;
+    }
+</script>
+@endpush
+
 @if(!empty($gs['paypal_client_id']))
 @push('scripts')
 <script src="https://www.paypal.com/sdk/js?client-id={{ $gs['paypal_client_id'] }}&currency=USD"></script>
@@ -216,7 +300,7 @@
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: '{{ $total }}'
+                                value: window.checkoutTotal ? window.checkoutTotal.toFixed(2) : '{{ $total }}'
                             }
                         }]
                     });

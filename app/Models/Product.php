@@ -33,7 +33,8 @@ class Product extends Model
         'coa_report',
         'images',
         'status',
-        'is_featured'
+        'is_featured',
+        'weight'
     ];
 
     protected $casts = [
@@ -58,7 +59,7 @@ class Product extends Model
     public function sizes()
     {
         return $this->belongsToMany(Size::class, 'product_sizes')
-                    ->withPivot('mrp_price', 'selling_price', 'stock', 'image')
+                    ->withPivot('mrp_price', 'selling_price', 'stock', 'image', 'weight')
                     ->withTimestamps();
     }
 

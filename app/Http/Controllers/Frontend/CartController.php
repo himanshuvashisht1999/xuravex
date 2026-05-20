@@ -20,6 +20,7 @@ class CartController extends Controller
         $sizeId = $request->input('size_id');
         $sizeName = null;
         $price = $product->selling_price ?: $product->mrp_price;
+        $weight = $product->weight;
         $cartKey = $id;
         $image = !empty($product->images) ? $product->images[0] : '';
 
@@ -34,6 +35,7 @@ class CartController extends Controller
             $size = $product->sizes()->where('sizes.id', $sizeId)->first();
             if ($size) {
                 $price = $size->pivot->selling_price ?: $size->pivot->mrp_price;
+                $weight = $size->pivot->weight;
                 $sizeName = $size->name;
                 $cartKey = $id . '_' . $sizeId;
                 if ($size->pivot->image) {
@@ -54,6 +56,7 @@ class CartController extends Controller
                 "name" => $product->name,
                 "quantity" => 1,
                 "price" => $price,
+                "weight" => $weight,
                 "image" => $image
             ];
         }

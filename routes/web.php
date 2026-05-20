@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
     // Checkout Routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('place.order');
+    Route::post('/checkout/get-shipping-rates', [CheckoutController::class, 'getShippingRates'])->name('checkout.shipping-rates');
     Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank.you');
 
     // Informational Pages
